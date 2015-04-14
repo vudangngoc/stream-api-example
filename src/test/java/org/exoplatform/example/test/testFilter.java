@@ -26,30 +26,30 @@ public class testFilter {
 			}
 			System.out.print(listIn.size() + ",");
 			for(int round = 0; round < numberRound; round ++){
-				start_time = System.currentTimeMillis();
+				start_time = System.nanoTime();
 				listIn.stream().filter(i -> i > 200).count();		
-				end_time = System.currentTimeMillis();
+				end_time = System.nanoTime();
 				running_time += (end_time - start_time);
 			}
 			System.out.print(running_time/numberRound + ",");
 
 			running_time = 0;
 			for(int round = 0; round < numberRound; round ++){
-				start_time = System.currentTimeMillis();
+				start_time = System.nanoTime();
 				listIn.parallelStream().filter(i -> i > 200).count();		
-				end_time = System.currentTimeMillis();
+				end_time = System.nanoTime();
 				running_time += (end_time - start_time);
 			}
 			System.out.print(running_time/numberRound + ",");
 
 			running_time = 0;
 			for(int round = 0; round < numberRound; round ++){
-				start_time = System.currentTimeMillis();
+				start_time = System.nanoTime();
 				int count = 0;
 				for(int i : listIn){
 					if(i > 200) count++;
 				}	
-				end_time = System.currentTimeMillis();
+				end_time = System.nanoTime();
 				running_time += (end_time - start_time);
 			}
 			System.out.println(running_time/numberRound);
