@@ -168,7 +168,13 @@ public class Example {
 				}
 				averageAge = totalAge/persons.size();
 
-
+				//Side-effect
+				List<String> listSE1 = new ArrayList<String>();
+				Arrays.stream(names).parallel()
+					.forEach(s -> listSE1.add(s));
+				
+				List<String> listSE2 = Arrays.stream(names).parallel()
+					.collect(Collectors.toList());
 
 				//Grouping
 				Map<Integer, List<Person>> personsByAge = new HashMap<Integer, List<Person>>();
