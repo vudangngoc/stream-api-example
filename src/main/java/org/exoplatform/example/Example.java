@@ -6,9 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Example {
@@ -42,6 +44,31 @@ public class Example {
 		.filter(s -> {System.out.println(s); return s.startsWith("B");});
 		//don't print
 
+		List<String> listString = Arrays.asList("a1", "a2", "b1", "c2", "c1");
+		List<String> filtedList = new ArrayList<String>();
+		
+		//Infinite stream
+//		IntStream.iterate(0, i -> ( i + 1 ) % 2)
+//	        .parallel()
+//	        .distinct()
+//	        .limit(10)
+//	        .forEach(System.out::println);
+		
+		//parallel computing
+		for(String s : listString){
+			Runnable r = new MyRunnable(filtedList,s){
+				@Override
+				public void run() {
+					if(s.startsWith("b"))
+						outputList.add(s);
+				}};
+			r.run();
+		}
+		
+		filtedList = listString.parallelStream()
+			.filter(s -> s.startsWith("b"))
+			.collect(Collectors.toList());
+		
 		Arrays.asList("a1", "a2", "b1", "c2", "c1")
 		.parallelStream()
 		.filter(s -> {
@@ -56,6 +83,8 @@ public class Example {
 		})
 		.reduce((x,y) -> {System.out.format("reduce: %s + %s [%s]\n",
 				x,y, Thread.currentThread().getName()); return x + y;});
+		
+		
 
 		Supplier<Stream<String>> streamSupplier =
 				() -> Stream.of("d2", "a2", "b1", "b3", "c")
@@ -79,6 +108,15 @@ public class Example {
 						.filter(c -> c.contains("am"))
 						.collect(Collectors.toList());
 
+				//Find first
+				for(String s : names){
+					if(s.startsWith("b"))
+						System.out.println("Hello " + s);			
+				}
+
+				Arrays.stream(names)
+				.filter(s -> s.startsWith("b"))
+				.findFirst();
 
 
 				//Mapping
@@ -183,5 +221,12 @@ public class Example {
 					.collect(Collectors.joining(" and ", "In Germany ", " are of legal age."));
 
 				System.out.println(phrase);
+				findFirstMatching(Arrays.stream(names).collect(Collectors.toList()),s -> s.startsWith("b"));
+	}
+	private static String findFirstMatching(List<String> data, Predicate<String> matcher){
+		Optional<String> result = data.stream()
+			.filter(matcher)
+			.findFirst();
+		return result.isPresent() ? result.get() : null;
 	}
 }
